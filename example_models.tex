@@ -53,12 +53,12 @@
 	\textbf{Prior}:
 	\begin{align*}
 		p(a, b, \sigma) & = p(a)p(b)p(\sigma) \\
-		p(a) = p(b) & = \textrm{Uniform}(-\infty, +\infty) \\
-		p(\sigma) & = \textrm{Uniform}(0, +\infty)
+		p(a) = p(b) & \sim \textrm{Uniform}(-\infty, +\infty) \\
+		p(\sigma) & \sim \textrm{Uniform}(0, +\infty)
 	\end{align*}
 	\textbf{Likelihood}:
 	\begin{align*}
-		p(y | a, b, \sigma) = \textrm{Normal}(ax + b, \sigma^2)	
+		p(y | a, b, \sigma) \sim \textrm{Normal}(ax + b, \sigma^2)	
 	\end{align*}
 \end{column}
 \begin{column}{0.5\textwidth}	
@@ -131,10 +131,10 @@ School 8 &  12 &     18 \\
 		\item ``No pooling'': \emph{Separate} treatment effect for each school. Assume: treatment effects have nothing in common.
 		\item Hierarchical models give us a third option: ``partial pooling''. Assume: treatment effects different, but drawn from the same distribution:
 		\begin{align*}
-			p(\mu) & = \textrm{Uniform}(-\infty, +\infty) \\
-			p(\tau) & = \textrm{Uniform}(0, +\infty) \\
-			p(\theta_i | \mu, \tau) & = N(\mu, \tau^2) \\
-			p(y_i | \theta_i) & = N(\theta_i, \sigma_i^2)
+			p(\mu) & \sim \textrm{Uniform}(-\infty, +\infty) \\
+			p(\tau) & \sim \textrm{Uniform}(0, +\infty) \\
+			p(\theta_i | \mu, \tau) & \sim N(\mu, \tau^2) \\
+			p(y_i | \theta_i) & \sim N(\theta_i, \sigma_i^2)
 		\end{align*}
 	\end{itemize}
 \end{frame}
@@ -167,15 +167,15 @@ Things to point out:
 	\item We'll use AFL data from 2014 onwards.
 	\item We give each team $i$ a separate skill $\theta$ each year $k$ (no pooling):
 	\begin{align*}
-		p(\theta_{ki}) = N(0, 1)
+		p(\theta_{ki}) \sim N(0, 1)
 	\end{align*}
 	\item We give each team $i$ a separate home advantage $\gamma$ (assumed constant; uniform priors on $\mu$ and $\sigma$):
 	\begin{align*}
-		p(\gamma_i | \mu_h, \sigma_h) = N(\mu_h, \sigma_h^2)
+		p(\gamma_i | \mu_h, \sigma_h) \sim N(\mu_h, \sigma_h^2)
 	\end{align*}
 	\item The likelihood for team $i$ to beat team $j$ at home in year $k$ is:
 	\begin{align*}
-		p(\textrm{i beats j in year k}|\theta, \gamma) = \textrm{Bernoulli}(\textrm{logit}^{-1}(\theta_{ki} - \theta_{kj} + \gamma_i))
+		p(\textrm{i beats j in year k}|\theta, \gamma) \sim \textrm{Bernoulli}(\textrm{logit}^{-1}(\theta_{ki} - \theta_{kj} + \gamma_i))
 	\end{align*}
 \end{itemize}
 \end{frame}
@@ -264,8 +264,8 @@ Carlton          & -2.89 & -2.16 &   -1.79 & -1.45 &  -0.79 \\
 \begin{frame}
 \frametitle{Conclusions}
 \begin{itemize}
-	\item Stan is extremely flexible. If you can write down the model, Stan can probably sample it (some exceptions).
-	\item Hierarchical models are often useful.
+	\item Stan is extremely flexible. If you can write down the model, Stan can (probably) sample it.
+	\item Hierarchical models are often useful. They allow you to ``borrow strength'' between estimates.
 \end{itemize}
 \end{frame}
 
