@@ -50,15 +50,15 @@
 \begin{column}{0.5\textwidth}
 	Model: Line with slope $a$, intercept $b$, and noise $\sigma$.
 
-	\textbf{Prior}:
+	\textbf{Prior $p(\theta)$}:
 	\begin{align*}
 		p(a, b, \sigma) & = p(a)p(b)p(\sigma) \\
-		p(a) = p(b) & \sim \textrm{Uniform}(-\infty, +\infty) \\
-		p(\sigma) & \sim \textrm{Uniform}(0, +\infty)
+		a, b & \sim \textrm{Uniform}(-\infty, +\infty) \\
+		\sigma & \sim \textrm{Uniform}(0, +\infty)
 	\end{align*}
-	\textbf{Likelihood}:
+	\textbf{Likelihood $p(y | \theta)$}:
 	\begin{align*}
-		p(y | a, b, \sigma) \sim \textrm{Normal}(ax + b, \sigma^2)	
+		y | a, b, \sigma \sim \textrm{Normal}(ax + b, \sigma^2)	
 	\end{align*}
 \end{column}
 \begin{column}{0.5\textwidth}	
@@ -94,7 +94,7 @@ model {
 		\item We can compute 95\% credible intervals easily from the posterior samples
 		\item We get samples from the true posterior, not an approximation
 		\item We don't really need Stan for this -- this is one of the few examples where we can compute $p(\theta | y)$ analytically
-		\item Stan automatically puts uniform priors on variables if none are specified.
+		\item Stan automatically puts flat priors (that is, uniform mass on the domain) on variables if none are specified.
 	\end{itemize}
 \end{frame}
 
@@ -126,17 +126,25 @@ School 8 &  12 &     18 \\
 	\begin{itemize}
 		\item ``Complete Pooling'': \emph{Single} treatment effect for all schools:
 		\begin{align*}
-			p(y_i | \theta) = N(\theta, \sigma_i^2)	
+			y_i | \theta \sim N(\theta, \sigma_i^2)	
 		\end{align*}
 		\item ``No pooling'': \emph{Separate} treatment effect for each school. Assume: treatment effects have nothing in common.
 		\item Hierarchical models give us a third option: ``partial pooling''. Assume: treatment effects different, but drawn from the same distribution:
 		\begin{align*}
-			p(\mu) & \sim \textrm{Uniform}(-\infty, +\infty) \\
-			p(\tau) & \sim \textrm{Uniform}(0, +\infty) \\
-			p(\theta_i | \mu, \tau) & \sim N(\mu, \tau^2) \\
-			p(y_i | \theta_i) & \sim N(\theta_i, \sigma_i^2)
+			\mu & \sim \textrm{Uniform}(-\infty, +\infty) \\
+			\tau & \sim \textrm{Uniform}(0, +\infty) \\
+			\theta_i | \mu, \tau & \sim N(\mu, \tau^2) \\
+			y_i | \theta_i & \sim N(\theta_i, \sigma_i^2)
 		\end{align*}
 	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Illustration of partial pooling}
+	\begin{figure}
+		\includegraphics[width=0.8\textwidth]{partial_pooling}
+		\caption{The idea behind partial pooling. We allow the school effects to be different, but we assume that they are all drawn from some population distribution, shown in blue.}		
+	\end{figure}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -167,15 +175,15 @@ Things to point out:
 	\item We'll use AFL data from 2014 onwards.
 	\item We give each team $i$ a separate skill $\theta$ each year $k$ (no pooling):
 	\begin{align*}
-		p(\theta_{ki}) \sim N(0, 1)
+		\theta_{ki} \sim N(0, 1)
 	\end{align*}
-	\item We give each team $i$ a separate home advantage $\gamma$ (assumed constant; uniform priors on $\mu$ and $\sigma$):
+	\item We give each team $i$ a separate home advantage $\gamma$ (assumed constant across seasons; flat priors on $\mu$ and $\sigma$):
 	\begin{align*}
-		p(\gamma_i | \mu_h, \sigma_h) \sim N(\mu_h, \sigma_h^2)
+		\gamma_i | \mu_h, \sigma_h \sim N(\mu_h, \sigma_h^2)
 	\end{align*}
 	\item The likelihood for team $i$ to beat team $j$ at home in year $k$ is:
 	\begin{align*}
-		p(\textrm{i beats j in year k}|\theta, \gamma) \sim \textrm{Bernoulli}(\textrm{logit}^{-1}(\theta_{ki} - \theta_{kj} + \gamma_i))
+		\textrm{i beats j in year k}|\theta, \gamma \sim \textrm{Bernoulli}(\textrm{logit}^{-1}(\theta_{ki} - \theta_{kj} + \gamma_i))
 	\end{align*}
 \end{itemize}
 \end{frame}
@@ -266,6 +274,7 @@ Carlton          & -2.89 & -2.16 &   -1.79 & -1.45 &  -0.79 \\
 \begin{itemize}
 	\item Stan is extremely flexible. If you can write down the model, Stan can (probably) sample it.
 	\item Hierarchical models are often useful. They allow you to ``borrow strength'' between estimates.
+	\item Quick plug: Stan is not the only probabilistic programming language. In particular, in R, Nick is working on a framework called greta which uses tensorflow to do sampling more quickly
 \end{itemize}
 \end{frame}
 
